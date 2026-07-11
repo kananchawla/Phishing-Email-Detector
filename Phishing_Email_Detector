@@ -1,0 +1,210 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "f9cbba27-0a62-4c12-a4a3-90817fc0215c",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "                                                text  label  \\\n",
+      "0  Subject: Office maintenance\\n\\nThanks for your...      0   \n",
+      "1  Hello, your profile has been locked. Use the s...      1   \n",
+      "2  Hi there, congratulations! You are the winner ...      1   \n",
+      "3  Attention, this is the fraud prevention accoun...      1   \n",
+      "4  Notice, your profile has been restricted. Use ...      1   \n",
+      "\n",
+      "           phishing_type severity  confidence  \n",
+      "0             legitimate      low        0.95  \n",
+      "1  credential_harvesting     high        0.89  \n",
+      "2         financial_scam   medium        0.69  \n",
+      "3         authority_scam     high        0.91  \n",
+      "4  credential_harvesting     high        0.80  \n"
+     ]
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "\n",
+    "# Load the dataset\n",
+    "df = pd.read_csv('phishing_legit_dataset_KD_10000.csv')\n",
+    "\n",
+    "# Show the first 5 rows\n",
+    "print(df.head())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "6bae6608-7e6c-42f6-96d2-283ad7519439",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Missing values in each column:\n",
+      " text             0\n",
+      "label            0\n",
+      "phishing_type    0\n",
+      "severity         0\n",
+      "confidence       0\n",
+      "dtype: int64\n",
+      "\n",
+      "Data after cleaning:\n",
+      "                                                text  label\n",
+      "0  Subject: Office maintenance\\n\\nThanks for your...      0\n",
+      "1  Hello, your profile has been locked. Use the s...      1\n",
+      "2  Hi there, congratulations! You are the winner ...      1\n",
+      "3  Attention, this is the fraud prevention accoun...      1\n",
+      "4  Notice, your profile has been restricted. Use ...      1\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Check for any missing values\n",
+    "print(\"Missing values in each column:\\n\", df.isnull().sum())\n",
+    "\n",
+    "# We only really need 'text' and 'label' for our model\n",
+    "# Let's keep only those two columns to make things cleaner\n",
+    "df_clean = df[['text', 'label']].copy()\n",
+    "\n",
+    "# Drop any rows that might be empty\n",
+    "df_clean = df_clean.dropna()\n",
+    "\n",
+    "print(\"\\nData after cleaning:\")\n",
+    "print(df_clean.head())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "bca8c147-9261-4297-a8ce-8a1d4b5b7063",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Model Accuracy: 100.00%\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sklearn.model_selection import train_test_split\n",
+    "from sklearn.feature_extraction.text import TfidfVectorizer\n",
+    "from sklearn.linear_model import LogisticRegression\n",
+    "from sklearn.metrics import accuracy_score, classification_report\n",
+    "\n",
+    "# 1. Convert text to numbers (Vectorization)\n",
+    "vectorizer = TfidfVectorizer(stop_words='english', max_features=5000)\n",
+    "X = vectorizer.fit_transform(df_clean['text'])\n",
+    "y = df_clean['label']\n",
+    "\n",
+    "# 2. Split data: 80% for training, 20% for testing\n",
+    "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n",
+    "\n",
+    "# 3. Train the AI (Logistic Regression)\n",
+    "model = LogisticRegression()\n",
+    "model.fit(X_train, y_train)\n",
+    "\n",
+    "# 4. Check accuracy\n",
+    "predictions = model.predict(X_test)\n",
+    "print(f\"Model Accuracy: {accuracy_score(y_test, predictions) * 100:.2f}%\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "ec0f45d1-5aec-4ad7-88c1-a1e7bbe985ed",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Model and Vectorizer saved successfully!\n"
+     ]
+    }
+   ],
+   "source": [
+    "import joblib\n",
+    "\n",
+    "# Save the model and the vectorizer\n",
+    "joblib.dump(model, 'phishing_model.pkl')\n",
+    "joblib.dump(vectorizer, 'tfidf_vectorizer.pkl')\n",
+    "\n",
+    "print(\"Model and Vectorizer saved successfully!\")\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "9f4c33f1-5b72-445b-b66f-95e6cd47b872",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Email Verdict: Phishing\n"
+     ]
+    }
+   ],
+   "source": [
+    "import joblib\n",
+    "\n",
+    "# Function to test new emails\n",
+    "def predict_email(email_text):\n",
+    "    # Load the saved model and vectorizer\n",
+    "    model = joblib.load('phishing_model.pkl')\n",
+    "    vectorizer = joblib.load('tfidf_vectorizer.pkl')\n",
+    "    \n",
+    "    # Transform the new text\n",
+    "    text_vector = vectorizer.transform([email_text])\n",
+    "    \n",
+    "    # Predict\n",
+    "    prediction = model.predict(text_vector)\n",
+    "    \n",
+    "    return \"Phishing\" if prediction[0] == 1 else \"Legitimate\"\n",
+    "\n",
+    "# --- TEST IT HERE ---\n",
+    "# Try changing this text to see how the AI reacts!\n",
+    "test_email = \"Hi there, congratulations! You are the winner of a $1000 gift card. Click here to claim.\"\n",
+    "print(f\"Email Verdict: {predict_email(test_email)}\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3de012e6-cf2d-4611-84a9-9fa3c1ffeb5d",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python [conda env:base] *",
+   "language": "python",
+   "name": "conda-base-py"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.13.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
