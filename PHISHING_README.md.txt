@@ -18,3 +18,22 @@ An automated machine learning tool designed to identify and classify phishing em
 You can test the model live here: [https://964acf5be995504877.gradio.live](https://964acf5be995504877.gradio.live)
 *(Note: This link is active while my local environment is running.)*
 
+## 🧪 Test Results & Validation
+To demonstrate the model's accuracy, I tested it against both malicious and legitimate email samples:
+
+**1. Phishing Email Detection:**
+![Phishing Test Result](## 🧪 Test Results & Validation
+To demonstrate the model's accuracy, I tested it against both malicious and legitimate email samples:
+
+**1. Phishing Email Detection:**
+![Phishing Test Result]()
+
+**2. Legitimate Email Detection:**
+![Legitimate Test Result]()
+
+*The model successfully classifies these emails by combining a keyword-based heuristic filter with a Logistic Regression AI core.)
+
+**2. Legitimate Email Detection:**
+![Legitimate Test Result](name_of_your_legitimate_screenshot.png)
+
+*The model successfully classifies these emails by combining a keyword-based heuristic filter with a Logistic Regression AI core.*
