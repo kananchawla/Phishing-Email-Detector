@@ -18,6 +18,3 @@ An automated machine learning tool designed to identify and classify phishing em
 You can test the model live here: [https://964acf5be995504877.gradio.live](https://964acf5be995504877.gradio.live)
 *(Note: This link is active while my local environment is running.)*
 
-## 📁 How to view results
-1. Click on **`detector_demo.ipynb`** in this repository to view the full code and analysis.
-2. You can see the model architecture and training process directly in the browser.
