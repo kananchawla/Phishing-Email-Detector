@@ -29,11 +29,6 @@ To demonstrate the model's accuracy, I tested it against both malicious and legi
 ![Phishing Test Result]()
 
 **2. Legitimate Email Detection:**
-![Legitimate Test Result]()
-
-*The model successfully classifies these emails by combining a keyword-based heuristic filter with a Logistic Regression AI core.)
-
-**2. Legitimate Email Detection:**
-![Legitimate Test Result](name_of_your_legitimate_screenshot.png)
+![Legitimate Test Result](Screenshot 2026-07-13 120155.png)
 
 *The model successfully classifies these emails by combining a keyword-based heuristic filter with a Logistic Regression AI core.*
