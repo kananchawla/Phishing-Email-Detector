@@ -22,8 +22,10 @@ You can test the model live here: [https://964acf5be995504877.gradio.live](https
 To demonstrate the model's accuracy, I tested it against both malicious and legitimate email samples:
 
 **1. Phishing Email Detection:**
+
 ![Phishing Test Result](phishing.png)
 
 **2. Legitimate Email Detection:**
-![Legitimate Test Result](legit.png)
+
+![Legitimate Test Result](legitimate.png)
 
